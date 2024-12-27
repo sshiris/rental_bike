@@ -71,9 +71,77 @@
           </div>
           <button>Search</button>
         </div>
-      </div>
 
-      <!-- Right Content -->
+        <!-- Right Content -->
+        <div class="bikesContainer">
+          <h2>Bikes</h2>
+          <div class="bikesAll"></div>
+          <div id="popup_overlay"></div>
+          <script>
+            fetch(`https://www.cc.puv.fi/~hmh/fed/fedApi/bikes/`)
+              .then((response) => {
+                if (!response.ok) {
+                  throw new Error(`Http error! status: ${response.status}`);
+                }
+                return response.json();
+              })
+              .then((allBikes) => {
+                console.log("All bikes: ", allBikes);
+
+                const bikesContainer = document.querySelector(".bikesAll");
+
+                allBikes.forEach((bike) => {
+                  const bikeDiv = document.createElement("div");
+                  bikeDiv.classList.add("bikeDiv");
+
+                  const bikeImg = document.createElement("img");
+                  bikeDiv.classList.add("bikeImg");
+                  bikeImg.src = bike.img_url;
+
+                  const bikeName = document.createElement("span");
+                  bikeName.classList.add("name");
+                  bikeName.textContent = bike.model;
+
+                  const bikeInfo = document.createElement("alert");
+                  bikeInfo.classList.add("info");
+                  bikeInfo.hidden = true;
+
+                  const popupOverlay = document.getElementById("popup_overlay");
+
+                  const bikeDetails = `
+            <h2>${bike.model}</h2>
+            <span>Manufacture: ${bike.manuf}</span>
+            <span>Gear: ${bike.gear}</span>
+            <span>Gear Manufacture: ${bike.gear_manuf}</span>
+            <span>Size: ${bike.size}</span>
+            <span>Detauks: ${bike.details}</span>
+            <span>Manufacture: ${bike.manuf}</span>
+            `;
+                  bikeInfo.innerHTML = bikeDetails;
+
+                  bikeDiv.appendChild(bikeImg);
+                  bikeDiv.appendChild(bikeName);
+                  bikeDiv.appendChild(bikeInfo);
+
+                  bikeDiv.addEventListener("click", function () {
+                    if (bikeInfo.hidden) {
+                      bikeInfo.hidden = false;
+                      popupOverlay.style.display = "flex";
+                    } else {
+                      bikeInfo.hidden = true;
+                      popupOverlay.style.display = "none";
+                    }
+                  });
+
+                  bikesContainer.appendChild(bikeDiv);
+                });
+              })
+              .catch((error) => {
+                console.error("error fetching bikes: ", error);
+              });
+          </script>
+        </div>
+      </div>
 
       <!-- Bottom Part -->
       <div class="bottom">
